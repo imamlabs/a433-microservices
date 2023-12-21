@@ -1,18 +1,17 @@
 #!/bin/bash
 
-# Pastikan environment variable DOCKER_USERNAME dan GITHUB_TOKEN telah ditetapkan
+#  environment variable DOCKER_USERNAME dan GITHUB_TOKEN telah ditetapkan
 export DOCKER_USERNAME=imamlabs
 export GITHUB_TOKEN=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
-# Perintah untuk membuat Docker image dari Dockerfile
-LABEL org.opencontainers.image.source=https://github.com/imamlabs/item-app
 
+LABEL org.opencontainers.image.source=https://github.com/imamlabs/item-app
+# Perintah untuk membuat Docker image dari Dockerfile
 docker build -t item-app:v1 .
 
 # Melihat daftar image di lokal
 docker images
 
 # Mengubah nama image agar sesuai dengan format GitHub Packages
-
 docker tag item-app:v1 ghcr.io/$DOCKER_USERNAME/item-app:v1
 
 

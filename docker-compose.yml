@@ -1,19 +1,19 @@
-version: '2'
+version: '2' # Menunjukkan versi format Docker Compose yang digunakan (versi 2).
 
 services:
-  item-app:
-    image: ghcr.io/imamlabs/item-app:v1
+  item-app: # Layanan/container bernama 'item-app'.
+    image: ghcr.io/imamlabs/item-app:v1 # Menggunakan Docker image 'ghcr.io/imamlabs/item-app' dengan tag 'v1'.
     ports:
-      - "80:8080"
+      - "80:8080" # Melakukan mapping port 80 host ke port 8080 
     depends_on:
-      - item-db
-    restart: always
+      - item-db # Bergantung pada layanan 'item-db', menunggu hingga 'item-db' siap sebelum dijalankan.
+    restart: always # Mengatur agar layanan selalu di-restart jika terhenti.
 
-  item-db:
-    image: mongo:3
+  item-db: # Layanan/container bernama 'item-db'.
+    image: mongo:3 # Menggunakan Docker image 'mongo' dengan tag '3'.
     volumes:
-      - app-db:/data/db
+      - app-db:/data/db # Mengaitkan volume Docker 'app-db' ke direktori '/data/db' pada container.
     restart: always
 
 volumes:
-  app-db:
+  app-db: # Mendefinisikan volume Docker dengan nama 'app-db'.
