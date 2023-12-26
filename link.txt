@@ -1,0 +1,2 @@
+frontend
+https://github.com/users/imamlabs/packages/container/package/karsajobs-ui
