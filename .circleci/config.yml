@@ -1,36 +1,37 @@
-version: 2.1  # Versi dari CircleCI konfigurasi
+version: 2.1
 
 orbs:
-  docker: circleci/docker@2.2.0  # Menggunakan orb Docker versi 2.2.0
-  node: circleci/node@4.0.0  # Menggunakan orb Node versi 4.0.0
+  docker: circleci/docker@2.2.0
+  node: circleci/node@4.0.0
 
 jobs:
-  lint-dockerfile:  # Pekerjaan untuk melintasi Dockerfile
+  lint-dockerfile:
     executor:
       name: docker/default
-      tag: '19.03'  # Menggunakan Docker versi 19.03
+      tag: '19.03'
     steps:
-      - checkout  # Mengambil kode sumber
-      - docker/install  # Menginstal Docker
+      - checkout
+      - setup_remote_docker:  # Mengaktifkan Docker pada lingkungan eksekusi
+          version: 19.03.13  # Versi Docker yang diinginkan
       - run:
           name: Lint Dockerfile
-          command: docker run --rm -i hadolint/hadolint < Dockerfile  # Menjalankan hadolint untuk melintasi Dockerfile
+          command: docker run --rm -i hadolint/hadolint < Dockerfile
 
-  build-app-karsajobs-ui:  # Pekerjaan untuk membangun dan mengunggah image karsajobs-ui
+  build-app-karsajobs-ui:
     executor: docker/default
     steps:
-      - checkout  # Mengambil kode sumber
+      - checkout
       - run:
           name: Build and Push karsajobs-ui Image
           command: |
-            docker build -t ghcr.io/imamlabs/karsajobs-ui:latest .  
-            echo "${DOCKER_PASSWORD}" | docker login ghcr.io -u "${DOCKER_USERNAME}" --password-stdin  
-            docker push ghcr.io/imamlabs/karsajobs-ui:latest  
+            docker build -t ghcr.io/imamlabs/karsajobs-ui:latest .
+            echo "${DOCKER_PASSWORD}" | docker login ghcr.io -u "${DOCKER_USERNAME}" --password-stdin
+            docker push ghcr.io/imamlabs/karsajobs-ui:latest
 
 workflows:
   ci:
     jobs:
-      - lint-dockerfile  # Menjalankan lint-dockerfile
-      - build-app-karsajobs-ui:  # Menjalankan build-app-karsajobs-ui setelah lint-dockerfile selesai
+      - lint-dockerfile
+      - build-app-karsajobs-ui:
           requires:
             - lint-dockerfile
