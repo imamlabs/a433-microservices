@@ -1,14 +1,18 @@
-apiVersion: v1
-kind: Service
+apiVersion: v1  # Versi API Kubernetes yang digunakan
+kind: Service  # Jenis objek yang akan dibuat (Service)
+
 metadata:
-  name: karsajobs-ui-service
+  name: karsajobs-ui-service  # Nama dari service yang akan dibuat
   labels:
-    app: frontend-karsajob
+    app: frontend-karsajob  # Label untuk service
+
 spec:
-  type: NodePort
+  type: NodePort  # Jenis service, dalam hal ini adalah NodePort untuk mengekspos service ke port pada node
+
   selector:
-    app: frontend-karsajob
+    app: frontend-karsajob  # Selektor untuk memilih pod yang akan diarahkan oleh service
+
   ports:
-    - protocol: TCP
-      port: 8000
-      targetPort: 8000
+    - protocol: TCP  # Protokol yang digunakan (TCP)
+      port: 8000  # Port eksternal yang akan diexpose oleh service
+      targetPort: 8000  # Port target pada pod yang akan diarahkan oleh service

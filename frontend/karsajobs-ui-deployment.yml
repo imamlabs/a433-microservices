@@ -1,24 +1,31 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1  # Versi API Kubernetes yang digunakan
+kind: Deployment  # Jenis objek yang akan dibuat (Deployment)
+
 metadata:
-  name: karsajobs-ui-deployment
+  name: karsajobs-ui-deployment  # Nama dari deployment yang akan dibuat
+
 spec:
-  replicas: 1
+  replicas: 1  # Jumlah replika dari pod yang akan dijalankan
   selector:
     matchLabels:
-      app: frontend-karsajob
+      app: frontend-karsajob  # Label untuk memilih pod yang akan dimasukkan dalam deployment
+
+  # Konfigurasi untuk template pod
   template:
     metadata:
       labels:
-        app: frontend-karsajob
+        app: frontend-karsajob  # Label yang akan diterapkan pada pod
     spec:
       containers:
-        - name: karsajobs-ui
-          image: ghcr.io/imamlabs/karsajobs-ui:latest
-          imagePullPolicy: Always
+        - name: karsajobs-ui  # Nama dari container dalam pod
+          image: ghcr.io/imamlabs/karsajobs-ui:latest  # Nama dan versi dari image Docker yang akan digunakan
+          imagePullPolicy: Always  # Kebijakan untuk selalu (pull) image terbaru
+
+          # Konfigurasi untuk port yang akan digunakan oleh container
           ports:
-            - containerPort: 8000
+            - containerPort: 8000  # Port yang akan di-expose oleh container
+
+          # Variabel lingkungan (environment variables) yang akan digunakan oleh container
           env:
-            - name: 'VUE_APP_BACKEND'
-              value: 'http://192.168.49.2:32231'
-              #value: 'http://127.0.0.1:32231'
+            - name: 'VUE_APP_BACKEND'  # Nama variabel lingkungan
+              value: 'http://192.168.49.2:32231'  # Nilai dari variabel lingkungan diambil dari minikube ip dan kubectl get service

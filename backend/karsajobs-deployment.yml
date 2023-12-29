@@ -1,35 +1,49 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1  # Versi API Kubernetes yang digunakan
+kind: Deployment  # Jenis objek yang akan dibuat (Deployment)
+
 metadata:
-  name: karsajobs-deployment
+  name: karsajobs-deployment  # Nama dari deployment yang akan dibuat
+
 spec:
-  replicas: 1
+  replicas: 1  # Jumlah replika dari pod yang akan dijalankan
   selector:
     matchLabels:
-      app: backend-karsajob
+      app: backend-karsajob  # Label untuk memilih pod yang akan dimasukkan dalam deployment
+
+  # Konfigurasi untuk template pod
   template:
     metadata:
       labels:
-        app: backend-karsajob
+        app: backend-karsajob  # Label yang akan diterapkan pada pod
     spec:
       containers:
-        - name: karsajobs
-          image: ghcr.io/imamlabs/karsajobs:latest
-          imagePullPolicy: Always
+        - name: karsajobs  # Nama dari container dalam pod
+          image: ghcr.io/imamlabs/karsajobs:latest  # Nama dan versi dari image Docker yang akan digunakan
+          imagePullPolicy: Always  # Kebijakan untuk selalu (pull) image terbaru
+
+          # Konfigurasi untuk port yang akan digunakan oleh container
           ports:
-            - containerPort: 8080
+            - containerPort: 8080  # Port yang akan di-expose oleh container
+
+          # Variabel lingkungan (environment variables) yang akan digunakan oleh container
           env:
-            - name: APP_PORT
-              value: "8080"
+            - name: APP_PORT  # Nama variabel lingkungan
+              value: "8080"  # Nilai dari variabel lingkungan
+
+            # Variabel lingkungan untuk koneksi ke layanan MongoDB
             - name: MONGO_HOST
-              value: "mongo-service"  # Menggunakan nama service MongoDB
+              value: "mongo-service"  # Nama service MongoDB yang akan digunakan
+
+            # Mengambil nilai dari secretKeyRef untuk nama pengguna MongoDB dari secret "mongo-secret"
             - name: MONGO_USER
               valueFrom:
                 secretKeyRef:
-                  name: mongo-secret
-                  key: MONGO_ROOT_USERNAME
+                  name: mongo-secret  # Nama dari secret yang akan digunakan
+                  key: MONGO_ROOT_USERNAME  # Kunci untuk mendapatkan nilai pengguna MongoDB dari secret
+
+            # Mengambil nilai dari secretKeyRef untuk kata sandi MongoDB dari secret "mongo-secret"
             - name: MONGO_PASS
               valueFrom:
                 secretKeyRef:
-                  name: mongo-secret
-                  key: MONGO_ROOT_PASSWORD
+                  name: mongo-secret  # Nama dari secret yang akan digunakan
+                  key: MONGO_ROOT_PASSWORD  # Kunci untuk mendapatkan nilai kata sandi MongoDB dari secret
