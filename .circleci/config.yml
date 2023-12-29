@@ -6,19 +6,19 @@ orbs:
 
 jobs:
   lint-dockerfile:
-    executor:
-      name: docker/default
-      tag: '19.03'
+    docker:  # Menggunakan Docker sebagai executor
+      - image: 'circleci/docker:19.03'
     steps:
       - checkout
-      - setup_remote_docker:  # Mengaktifkan Docker pada lingkungan eksekusi
-          version: 19.03.13  # Versi Docker yang diinginkan
+      - setup_remote_docker:
+          version: 19.03.13
       - run:
           name: Lint Dockerfile
           command: docker run --rm -i hadolint/hadolint < Dockerfile
 
   build-app-karsajobs-ui:
-    executor: docker/default
+    docker:
+      - image: 'circleci/docker:19.03'
     steps:
       - checkout
       - run:
