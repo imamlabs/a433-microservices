@@ -16,12 +16,8 @@ jobs:
       - run:
           name: Install and Run Hadolint
           command: |
-
-            # Mengunduh dan menginstall Hadolint
             sudo wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
             sudo chmod +x /bin/hadolint
-
-          # Menjalankan Hadolint pada Dockerfile
             hadolint Dockerfile
 
   # Job untuk build dan push image Docker untuk frontend karsajobs-ui
@@ -35,8 +31,6 @@ jobs:
       - run:
           name: Build and Push karsajobs-ui Image
           command: |
-
-            # Perintah build dan push image Docker
             echo "Build karsajobs-ui"
             echo "${DOCKER_PASSWORD}" | docker login ghcr.io -u "${DOCKER_USERNAME}" --password-stdin
             docker build -t ghcr.io/$DOCKER_USERNAME/karsajobs-ui:latest -f Dockerfile .
