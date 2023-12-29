@@ -11,20 +11,12 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Check Docker Version
+          command: docker --version  # Menggunakan perintah Docker yang tidak bergantung pada systemd
+      - run:
           name: Check Docker Daemon
           command: |
-            # Memeriksa status Docker daemon
-            sudo systemctl status docker
-
-            # Menunggu hingga Docker daemon sepenuhnya berjalan
-            while [ "$(sudo systemctl is-active docker)" != "active" ]; do
-              sleep 1
-            done
-
-            # Memeriksa izin file soket Docker
             ls -l /var/run/docker.sock
-
-            # Memeriksa informasi Docker daemon
             docker info
 
   build-app-karsajobs-ui:
