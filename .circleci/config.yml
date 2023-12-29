@@ -22,13 +22,17 @@ jobs:
       DOCKER_PASSWORD: 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
     steps:
       - checkout
+      - run:
+          name: Logout from Docker
+          command: |
+            docker logout
+          when: always  # Menjamin langkah ini dijalankan bahkan jika langkah selanjutnya gagal
       - setup_remote_docker
       - run:
-          name: Tes login
+          name: Test login
           command: |
-            
             echo $DOCKER_PASSWORD | docker login ghcr.io -u $DOCKER_USERNAME --password-stdin
-          
+
 workflows:
   ci:
     jobs:
