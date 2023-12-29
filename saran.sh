@@ -15,3 +15,4 @@ minikube service prometheus-server-np -n monitoring
 kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-np -n monitoring
 kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 fMjsMPuqHFTBUMEg7DsWyTLg1S6VXunAUhYnEVjo
+
