@@ -1,0 +1,38 @@
+version: 2.1
+
+orbs:
+  docker: circleci/docker@2.2.0
+  go: circleci/go@1.7.3
+jobs:
+  test-app:
+    executor:
+      name: go/default
+      tag: '1.15'
+    steps:
+      -checkout
+      -run:
+         name: Run Unit Test
+         command: go test -v -short --count=1 $(go list ./...)
+
+  build-app-karsajobs:
+    executor: docker/docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build and Push karsajobs Image
+          command: |
+            docker build -t ghcr.io/imamlabs/karsajobs:latest .
+            echo "${DOCKER_PASSWORD}" | docker login ghcr.io -u "${DOCKER_USERNAME}" --password-stdin
+            docker push ghcr.io/imamlabs/karsajobs:latest
+
+workflows:
+  ci:
+    jobs:
+      - docker/hadolint:
+          dockerfiles: '.Dockerfile'
+      - test-app
+      - build-app-karsajobs:
+           requiers:
+             -docker/hadolint
+             -test-app
