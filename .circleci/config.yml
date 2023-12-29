@@ -13,9 +13,7 @@ jobs:
       name: go/default  # Menggunakan executor bernama 'go/default'
       tag: '1.15'  # Versi Go yang akan digunakan
     steps:
-      - checkout  # Mengambil kode dari repository
-
-      # Menjalankan perintah untuk unit test
+      - checkout  
       - run:
           name: Run Unit Test
           command: go test -v -short --count=1 $(go list ./...)
@@ -25,9 +23,7 @@ jobs:
     executor: docker/docker  # Menggunakan executor Docker
     steps:
       - checkout  # Mengambil kode dari repository
-      - setup_remote_docker  # Mengkonfigurasi Docker pada remote host
-
-      # Menjalankan perintah untuk ngebuild dan push image Docker
+      - setup_remote_docker  
       - run:
           name: Build and Push karsajobs Image
           command: |
