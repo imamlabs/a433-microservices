@@ -17,7 +17,7 @@ jobs:
 
   build-app-karsajobs:
     executor: docker/docker
-    environent:
+    environment:
       DOCKER_USERNAME: imamlabs
       DOCKER_PASSWORD: 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
     steps:
