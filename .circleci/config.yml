@@ -1,42 +1,55 @@
-version: 2.1
+version: 2.1  # Versi dari konfigurasi CircleCI
 
+# orbs yang akan digunakan. Orbs (konfigurasi yang dapat digunakan ulang).
 orbs:
-  docker: circleci/docker@2.2.0
-  node: circleci/node@4.0.0
+  docker: circleci/docker@2.2.0  # Orb untuk Docker
+  node: circleci/node@4.0.0  # Orb untuk Node.js
 
+# jobs yang akan dijalankan oleh CircleCI
 jobs:
+  # Job untuk menjalankan linter pada Dockerfile menggunakan Hadolint
   lint-dockerfile:
     docker:
-      - image: 'cimg/base:2022.01'
+      - image: 'cimg/base:2022.01'  # Menggunakan image Docker dengan base image cimg/base:2022.01
     steps:
-      - checkout
+      - checkout  # Mengambil kode dari repository
       - run:
           name: Install and Run Hadolint
           command: |
+
+            # Mengunduh dan menginstall Hadolint
             sudo wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
             sudo chmod +x /bin/hadolint
+
+          # Menjalankan Hadolint pada Dockerfile
             hadolint Dockerfile
 
+  # Job untuk build dan push image Docker untuk frontend karsajobs-ui
   build-app-karsajobs-ui:
     docker:
-      - image: 'cimg/base:2022.01'
+      - image: 'cimg/base:2022.01'  # Menggunakan image Docker dengan base image cimg/base:2022.01
     steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - checkout  # Mengambil kode dari repository
+      - setup_remote_docker:  # Mengkonfigurasi Docker pada remote host
+          docker_layer_caching: true  # Mengaktifkan caching untuk lapisan Docker
       - run:
           name: Build and Push karsajobs-ui Image
           command: |
-         
+
+            # Perintah build dan push image Docker
             echo "Build karsajobs-ui"
             echo "${DOCKER_PASSWORD}" | docker login ghcr.io -u "${DOCKER_USERNAME}" --password-stdin
             docker build -t ghcr.io/$DOCKER_USERNAME/karsajobs-ui:latest -f Dockerfile .
             docker push ghcr.io/$DOCKER_USERNAME/karsajobs-ui:latest
 
+# (workflow) yang terdiri dari serangkaian jobs
 workflows:
   ci:
     jobs:
+      # Menjalankan linter untuk Dockerfile sebelum melakukan build
       - lint-dockerfile
+
+      # Menjalankan job build-app-karsajobs-ui setelah lint-dockerfile selesai
       - build-app-karsajobs-ui:
           requires:
             - lint-dockerfile
