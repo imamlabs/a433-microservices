@@ -23,10 +23,9 @@ jobs:
       - run:
           name: Build and Push karsajobs Image
           command: |
-            docker logout
-            DOCKER_IMAGE_TAG=$(git rev-parse --short HEAD)
-            docker build -t ghcr.io/$DOCKER_USERNAME/karsajobs:$DOCKER_IMAGE_TAG .
-            docker login -u imamlabs -p $GITHUB_TOKEN https://ghcr.io -password-stdin
+            docker build -t ghcr.io/$DOCKER_USERNAME/karsajobs:latest -f Dockerfile .
+            echo "$DOCKER_PASSWORD" | docker login ghcr.io -u "$DOCKER_USERNAME" --password-stdin
+            docker push ghcr.io/$DOCKER_USERNAME/karsajobs:latest
             
             
 
