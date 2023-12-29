@@ -7,7 +7,7 @@ orbs:
 jobs:
   lint-dockerfile:
     docker:  # Menggunakan Docker sebagai executor
-      - image: 'circleci/docker:19.03'
+      - image: 'cimg/base:2022.01'  # Mengganti gambar Docker dengan citra yang terdapat di registry "cimg" yang sering digunakan di CircleCI.
     steps:
       - checkout
       - setup_remote_docker:
@@ -18,7 +18,7 @@ jobs:
 
   build-app-karsajobs-ui:
     docker:
-      - image: 'circleci/docker:19.03'
+      - image: 'cimg/base:2022.01'  # Mengganti gambar Docker dengan citra yang terdapat di registry "cimg".
     steps:
       - checkout
       - run:
