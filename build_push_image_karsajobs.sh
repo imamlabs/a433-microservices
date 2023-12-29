@@ -3,7 +3,7 @@
 # Set GitHub username
 GITHUB_USERNAME=imamlabs
 # Set GitHub token
-GITHUB_TOKEN=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
+GITHUB_TOKEN=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
 
 # Build Docker image untuk karsajobs backend
 docker build -t ghcr.io/$GITHUB_USERNAME/karsajobs:latest -f Dockerfile .

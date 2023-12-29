@@ -19,7 +19,7 @@ jobs:
     executor: docker/docker
     environment:
       DOCKER_USERNAME: imamlabs
-      DOCKER_PASSWORD: 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
+      DOCKER_PASSWORD: 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
     steps:
       - checkout
       - setup_remote_docker
