@@ -11,17 +11,26 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check Docker Version
-          command: docker --version  # Menggunakan perintah Docker yang tidak bergantung pada systemd
-      - run:
-          name: Check Docker Daemon
+          name: Start Docker Daemon
           command: |
-            ls -l /var/run/docker.sock
-            docker info
+            sudo systemctl start docker
+
+      - run:
+          name: Check Docker Daemon Status
+          command: |
+            sudo systemctl status docker
+
+      - run:
+          name: Check Docker Socket
+          command: ls -l /var/run/docker.sock  # Memeriksa keberadaan file soket Docker
+
+      - run:
+          name: Check Docker Processes
+          command: docker ps  # Memeriksa proses Docker
 
   build-app-karsajobs-ui:
     docker:
-      - image: 'cimg/base:2022.01'  # Beralih ke citra yang umum
+      - image: 'cimg/base:2022.01'  
     steps:
       - checkout
       - run:
