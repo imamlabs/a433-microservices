@@ -1,41 +1,52 @@
-version: 2.1
+version: 2.1  # Versi dari konfigurasi CircleCI
 
+# Definisi orbs yang akan digunakan. Orbs (konfigurasi yang dapat digunakan ulang).
 orbs:
-  docker: circleci/docker@2.2.0
-  go: circleci/go@1.7.3
+  docker: circleci/docker@2.2.0  # Orb untuk Docker
+  go: circleci/go@1.7.3  # Orb untuk Go
 
+# jobs yang akan dijalankan oleh CircleCI
 jobs:
+  # menjalankan unit test pada aplikasi Go
   test-app:
     executor:
-      name: go/default
-      tag: '1.15'
+      name: go/default  # Menggunakan executor bernama 'go/default'
+      tag: '1.15'  # Versi Go yang akan digunakan
     steps:
-      - checkout
+      - checkout  # Mengambil kode dari repository
+
+      # Menjalankan perintah untuk unit test
       - run:
           name: Run Unit Test
           command: go test -v -short --count=1 $(go list ./...)
 
+  # build image Docker karsajobs
   build-app-karsajobs:
-    executor: docker/docker
+    executor: docker/docker  # Menggunakan executor Docker
     steps:
-      - checkout
-      - setup_remote_docker
+      - checkout  # Mengambil kode dari repository
+      - setup_remote_docker  # Mengkonfigurasi Docker pada remote host
+
+      # Menjalankan perintah untuk ngebuild dan push image Docker
       - run:
           name: Build and Push karsajobs Image
           command: |
             docker build -t ghcr.io/$DOCKER_USERNAME/karsajobs:latest -f Dockerfile .
             echo "$DOCKER_PASSWORD" | docker login ghcr.io -u "$DOCKER_USERNAME" --password-stdin
             docker push ghcr.io/$DOCKER_USERNAME/karsajobs:latest
-            
-            
 
-
+# (workflow) yang terdiri dari serangkaian jobs
 workflows:
   ci:
     jobs:
+      # Menjalankan linter untuk Dockerfile
       - docker/hadolint:
           dockerfiles: './Dockerfile'
+
+      # Menjalankan pekerjaan test-app
       - test-app
+
+      # Menjalankan build-app-karsajobs setelah docker/hadolint dan test-app selesai
       - build-app-karsajobs:
           requires:
             - docker/hadolint
