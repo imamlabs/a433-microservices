@@ -17,9 +17,6 @@ jobs:
 
   build-app-karsajobs:
     executor: docker/docker
-    environment:
-      DOCKER_USERNAME: imamlabs
-      DOCKER_PASSWORD: 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
     steps:
       - checkout
       - setup_remote_docker
