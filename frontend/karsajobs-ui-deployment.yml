@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: karsajobs-ui-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-karsajob
+  template:
+    metadata:
+      labels:
+        app: frontend-karsajob
+    spec:
+      containers:
+        - name: karsajobs-ui
+          image: ghcr.io/imamlabs/karsajobs-ui:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: 'VUE_APP_BACKEND'
+              value: 'http://192.168.49.2:32231'
+              #value: 'http://127.0.0.1:32231'
