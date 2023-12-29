@@ -6,19 +6,30 @@ orbs:
 
 jobs:
   lint-dockerfile:
-    docker:  # Using Docker as executor
-      - image: 'cimg/base:2022.01' 
+    docker:  # Menggunakan Docker sebagai executor
+      - image: 'cimg/base:2022.01'
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.11  
       - run:
-          name: Check Docker Info
-          command: docker info  # Checking Docker daemon information
+          name: Check Docker Daemon
+          command: |
+            # Memeriksa status Docker daemon
+            sudo systemctl status docker
+
+            # Menunggu hingga Docker daemon sepenuhnya berjalan
+            while [ "$(sudo systemctl is-active docker)" != "active" ]; do
+              sleep 1
+            done
+
+            # Memeriksa izin file soket Docker
+            ls -l /var/run/docker.sock
+
+            # Memeriksa informasi Docker daemon
+            docker info
 
   build-app-karsajobs-ui:
     docker:
-      - image: 'cimg/base:2022.01'  # Switching to a common image
+      - image: 'cimg/base:2022.01'  # Beralih ke citra yang umum
     steps:
       - checkout
       - run:
