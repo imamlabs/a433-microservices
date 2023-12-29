@@ -6,27 +6,29 @@ orbs:
 
 jobs:
   lint-dockerfile:
-    docker:  # Menggunakan Docker sebagai executor
+    docker:
       - image: 'cimg/base:2022.01'
     steps:
       - checkout
       - run:
-          name: Check Docker Daemon
+          name: Install and Run Hadolint
           command: |
-            ls -l /var/run/docker.sock
-            docker info
+            sudo wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+            sudo chmod +x /bin/hadolint
+            hadolint Dockerfile
 
   build-app-karsajobs-ui:
     docker:
-      - image: 'cimg/base:2022.01' 
+      - image: 'cimg/base:2022.01'
     steps:
       - checkout
       - run:
           name: Build and Push karsajobs-ui Image
           command: |
-            docker build -t ghcr.io/imamlabs/karsajobs-ui:latest .
+            echo "Build karsajobs-ui"
             echo "${DOCKER_PASSWORD}" | docker login ghcr.io -u "${DOCKER_USERNAME}" --password-stdin
-            docker push ghcr.io/imamlabs/karsajobs-ui:latest
+            docker build -t ghcr.io/$DOCKER_USERNAME/karsajobs-ui:latest -f Dockerfile .
+            docker push ghcr.io/$DOCKER_USERNAME/karsajobs-ui:latest
 
 workflows:
   ci:
