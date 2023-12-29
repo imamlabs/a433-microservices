@@ -24,9 +24,9 @@ jobs:
       - run:
           name: Build and Push karsajobs-ui Image
           command: |
-            docker build -t ghcr.io/imamlabs/karsajobs-ui:latest .
-            echo "${DOCKER_PASSWORD}" | docker login ghcr.io -u "${DOCKER_USERNAME}" --password-stdin
-            docker push ghcr.io/imamlabs/karsajobs-ui:latest
+            docker build -t ghcr.io/$DOCKER_USERNAME/karsajobs-ui:latest -f Dockerfile .
+            echo "$DOCKER_PASSWORD" | docker login ghcr.io -u "$DOCKER_USERNAME" --password-stdin
+            docker push ghcr.io/$DOCKER_USERNAME/karsajobs-ui:latest
 
 workflows:
   ci:
