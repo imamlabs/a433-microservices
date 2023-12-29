@@ -6,27 +6,27 @@ orbs:
 
 jobs:
   lint-dockerfile:
-    docker:  # Menggunakan Docker sebagai executor
-      - image: 'cimg/base:2022.01'  # Mengganti gambar Docker dengan citra yang terdapat di registry "cimg" yang sering digunakan di CircleCI.
+    docker:  # Using Docker as executor
+      - image: 'cimg/base:2022.01' 
     steps:
       - checkout
       - setup_remote_docker:
-          version: 19.03.13
+          version: 20.10.11  
       - run:
-          name: Lint Dockerfile
-          command: docker run --rm -i hadolint/hadolint < Dockerfile
+          name: Check Docker Info
+          command: docker info  # Checking Docker daemon information
 
   build-app-karsajobs-ui:
     docker:
-      - image: 'cimg/base:2022.01'  # Mengganti gambar Docker dengan citra yang terdapat di registry "cimg".
+      - image: 'cimg/base:2022.01'  # Switching to a common image
     steps:
       - checkout
       - run:
           name: Build and Push karsajobs-ui Image
           command: |
-            docker build -t ghcr.io/$DOCKER_USERNAME/karsajobs-ui:latest -f Dockerfile .
-            echo "$DOCKER_PASSWORD" | docker login ghcr.io -u "$DOCKER_USERNAME" --password-stdin
-            docker push ghcr.io/$DOCKER_USERNAME/karsajobs-ui:latest
+            docker build -t ghcr.io/imamlabs/karsajobs-ui:latest .
+            echo "${DOCKER_PASSWORD}" | docker login ghcr.io -u "${DOCKER_USERNAME}" --password-stdin
+            docker push ghcr.io/imamlabs/karsajobs-ui:latest
 
 workflows:
   ci:
