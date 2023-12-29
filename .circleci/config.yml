@@ -1,17 +1,43 @@
-#!/bin/bash -eo pipefail
+version: 2.1
 
-# Set environment variables
-DOCKER_USERNAME="imamlabs"
-DOCKER_PASSWORD="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"
-PACKAGE_REGISTRY="ghcr.io"
+orbs:
+  docker: circleci/docker@2.2.0
+  go: circleci/go@1.7.3
 
-# Login to GitHub Package Registry
-echo "$DOCKER_PASSWORD" | docker login $PACKAGE_REGISTRY -u $DOCKER_USERNAME --password-stdin
+jobs:
+  test-app:
+    executor:
+      name: go/default
+      tag: '1.15'
+    steps:
+      - checkout
+      - run:
+          name: Run Unit Test
+          command: go test -v -short --count=1 $(go list ./...)
 
-# Check if the pull was successful
-if [ $? -eq 0 ]; then
-  echo "Docker login test successful."
-else
-  echo "Docker login test failed."
-  exit 1
-fi
+  build-app-karsajobs:
+    executor: docker/docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build and Push karsajobs Image
+          command: |
+            docker logout
+            DOCKER_IMAGE_TAG=$(git rev-parse --short HEAD)
+            docker build -t ghcr.io/$DOCKER_USERNAME/karsajobs:$DOCKER_IMAGE_TAG .
+            echo $GITHUB_TOKEN | docker login ghcr.io -u $DOCKER_USERNAME --password-stdin
+            
+            
+
+
+workflows:
+  ci:
+    jobs:
+      - docker/hadolint:
+          dockerfiles: './Dockerfile'
+      - test-app
+      - build-app-karsajobs:
+          requires:
+            - docker/hadolint
+            - test-app
