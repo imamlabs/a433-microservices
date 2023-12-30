@@ -1,2 +1,12 @@
-frontend
+Package backend:
+https://github.com/users/imamlabs/packages/container/package/karsajobs
+
+Package frontend
 https://github.com/users/imamlabs/packages/container/package/karsajobs-ui
+
+link github
+https://github.com/imamlabs/a433-microservices/tree/karsajobs-ui
+
+https://github.com/imamlabs/a433-microservices/tree/karsajobs
+
+https://github.com/imamlabs/a433-microservices/tree/kubernetes
