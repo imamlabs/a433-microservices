@@ -1,0 +1,7 @@
+link github package
+https://github.com/users/imamlabs/packages/container/package/order-service
+https://github.com/users/imamlabs/packages/container/package/shipping-service
+
+link github
+https://github.com/imamlabs/a433-microservices/tree/order-service
+https://github.com/imamlabs/a433-microservices/tree/shipping-service

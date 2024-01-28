@@ -1,0 +1,37 @@
+
+
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+echo "$INGRESS_HOST" "$INGRESS_PORT" "$SECURE_INGRESS_PORT"
+10.107.66.96 80 443
+export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+echo "$GATEWAY_URL"
+10.107.66.96:80
+echo "http://$GATEWAY_URL/order"
+http://10.107.66.96:80/order
+
+
+kubectl describe pod order-service-0 -n rabbit
+kubectl get namespace rabbit --show-labels
+kubectl label namespace rabbit istio-injection=enabled
+kubectl delete pod order-service-0 -n rabbit
+kubectl get namespace --show-labels
+kubectl delete mutatingwebhookconfiguration istio-revision-tag-default
+export PATH=$PWD/bin:$PATH
+istioctl analyze
+kubectl get gateway -A
+kubectl get virtualservice -A
+
+
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+ echo "$INGRESS_HOST" "$INGRESS_PORT" "$SECURE_INGRESS_PORT"
+ export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+ echo "$GATEWAY_URL"
+ echo "http://$GATEWAY_URL/order"
+ minikube tunnel
+ 
+
+

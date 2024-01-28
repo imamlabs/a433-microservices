@@ -1,0 +1,65 @@
+# Definisi StatefulSet untuk RabbitMQ
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq                          # Nama StatefulSet
+  namespace: rabbit                      # Namespace tempat StatefulSet ditempatkan
+spec:
+  serviceName: rabbitmq                   # Nama Service yang akan terhubung ke pod-pod StatefulSet
+  replicas: 1                             # Jumlah replika (dalam kasus ini, satu pod)
+  selector:
+    matchLabels:
+      app: rabbitmq                       # Label untuk memilih pod yang dimiliki oleh StatefulSet
+  template:
+    metadata:
+      labels:
+        app: rabbitmq                    # Label yang diterapkan ke pod-pod yang dibuat oleh StatefulSet
+    spec:
+      containers:
+      - name: rabbitmq                    # Nama container
+        image: "rabbitmq:3.11-management" # Gambar container dari registry Docker
+        ports:
+        - containerPort: 5672             # Port AMQP
+        - containerPort: 15672            # Port untuk manajemen
+        volumeMounts:
+        - name: rabbitmq-data             # Volume untuk data RabbitMQ
+          mountPath: /var/lib/rabbitmq/
+        - name: rabbitmq-log              # Volume untuk log RabbitMQ
+          mountPath: /var/log/rabbitmq/
+---
+  volumeClaimTemplates:
+  - metadata:
+      name: rabbitmq-data                # Template klaim volume untuk data RabbitMQ
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
+  - metadata:
+      name: rabbitmq-log                 # Template klaim volume untuk log RabbitMQ
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+---
+# Definisi Service untuk RabbitMQ
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq                         # Nama Service
+  namespace: rabbit                      # Namespace tempat Service ditempatkan
+spec:
+  selector:
+    app: rabbitmq                        # Selektor untuk memilih pod yang akan menjadi backend Service
+  ports:
+    - name: amqp                         # Nama port AMQP
+      protocol: TCP
+      port: 5672                         # Port yang terbuka di Service
+      targetPort: 5672                   # Port yang diarahkan ke pod-pod yang dipilih
+    - name: management                   # Nama port untuk manajemen
+      protocol: TCP
+      port: 15672                        # Port untuk manajemen yang terbuka di Service
+      targetPort: 15672                  # Port yang diarahkan ke pod-pod yang dipilih
+  type: NodePort                         # Jenis Service (NodePort memungkinkan akses dari luar cluster)

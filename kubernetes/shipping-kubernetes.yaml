@@ -1,0 +1,49 @@
+# Definisi StatefulSet untuk Shipping Service
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: shipping-service-statefulset      # Nama StatefulSet
+  namespace: rabbit                       # Namespace tempat StatefulSet ditempatkan
+spec:
+  replicas: 1                              # Jumlah replika (dalam kasus ini, satu pod)
+  selector:
+    matchLabels:
+      app: shipping-service                # Label untuk memilih pod yang dimiliki oleh StatefulSet
+  serviceName: shipping-service-service   # Nama Service yang akan terhubung ke pod-pod StatefulSet
+  template:
+    metadata:
+      labels:
+        app: shipping-service             # Label yang diterapkan ke pod-pod yang dibuat oleh StatefulSet
+    spec:
+      # Inisialisasi container yang menunggu ketersediaan layanan RabbitMQ
+      initContainers:
+      - name: wait-for-rabbit
+        image: alpine:latest
+        # Perintah shell untuk menunggu hingga DNS untuk layanan RabbitMQ dapat diresolusi
+        command: ['sh', '-c', 'until nslookup rabbitmq.rabbit.svc.cluster.local; do echo waiting for rabbit; sleep 2; done']
+      # Container utama yang menjalankan shipping-service
+      containers:
+      - name: shipping-service
+        image: ghcr.io/imamlabs/shipping-service:latest  # Nama image untuk container shipping-service
+        ports:
+        - containerPort: 3001            # Port yang akan digunakan oleh Shipping Service
+        env:
+        - name: AMQP_URL                   # Variabel lingkungan untuk URL AMQP
+          value: "amqp://guest:guest@rabbitmq:5672"  # URL AMQP dengan informasi koneksi
+    
+---
+
+# Definisi Service untuk Shipping Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping-service-service           # Nama Service
+  namespace: rabbit                        # Namespace tempat Service ditempatkan
+spec:
+  selector:
+    app: shipping-service                  # Selektor untuk memilih pod yang akan menjadi backend Service
+  ports:
+    - protocol: TCP
+      port: 3001                           # Port yang terbuka di Service
+      targetPort: 3001                     # Port yang diarahkan ke pod-pod yang dipilih
+  type: NodePort                           # Jenis Service (NodePort memungkinkan akses dari luar cluster)

@@ -1,0 +1,55 @@
+# Definisi Service untuk order-service
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service-service     # Nama Service
+  namespace: rabbit               # Namespace tempat Service ditempatkan
+spec:
+  selector:
+    app: order-service            # Selektor untuk memilih pod yang akan menjadi backend Service
+  ports:
+    - name: http-order            # Mengikuti konvensi Istio
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: NodePort                  # Jenis Service (NodePort memungkinkan akses dari luar cluster)
+
+---
+
+# Definisi Service untuk RabbitMQ
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq                  # Nama Service
+  namespace: rabbit               # Namespace tempat Service ditempatkan
+spec:
+  selector:
+    app: rabbitmq                 # Selektor untuk memilih pod yang akan menjadi backend Service
+  ports:
+    - name: http-amqp             # Mengikuti konvensi Istio
+      protocol: TCP
+      port: 5672
+      targetPort: 5672
+    - name: http-management       # Mengikuti konvensi Istio
+      protocol: TCP
+      port: 15672
+      targetPort: 15672
+  type: NodePort                  # Jenis Service (NodePort memungkinkan akses dari luar cluster)
+
+---
+
+# Definisi Service untuk Shipping Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping-service-service  # Nama Service
+  namespace: rabbit               # Namespace tempat Service ditempatkan
+spec:
+  selector:
+    app: shipping-service         # Selektor untuk memilih pod yang akan menjadi backend Service
+  ports:
+    - name: http-shipping         # Mengikuti konvensi Istio
+      protocol: TCP
+      port: 3001
+      targetPort: 3001
+  type: NodePort                  # Jenis Service (NodePort memungkinkan akses dari luar cluster)
